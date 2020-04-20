@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            margin:0;
+        }
+        p{
+            margin:0;
+            padding:0;
+        }
+
+        .actions{
+            position:fixed;
+            left:0;
+            bottom:0;
+        }
+
+        .actions > #brush{
+            display:none;
+        }
+
+        .actions.x #brush{
+            display:inline-block;
+        }
+
+        .actions.x #eraser{
+            display:none;
+        }
+
+
+
+        /* CSS调节canvas的宽高会等比放大就像图片一样被等比拉伸，所以不建议css控制canvas初始宽高 */
+        canvas {
+            border:1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="xxx" width=300 height=300></canvas>
+    <div id="actions" class="actions">
+        <button id="eraser">橡皮擦</button>
+        <button id="brush">画笔</button>
+    </div>
+
+    <!-- <p>*为什么有偏移？鼠标点击有偏离，坐标相对谁？—— 坐标相对于视口（viewport）不是相对于body的,当我点击左上角时候坐标不是0,0， 而是20，20，canvas就会认为你在绘图区域的20,20坐标绘制图形。</p>
+    <p>需要得到一个相对canvas的位置才可以。</p> -->
+</body>
+</html>
+
+<script>
+    var canvas = document.getElementById('xxx');
+    var context = canvas.getContext('2d');
+    autoSetCanvas(canvas);
+    listenToMouse(canvas);
+
+
+
+
+
+
+    //矩形
+    // context.fillStyle = 'blue';
+    // context.fillRect(10,10,100,100);
+
+    // context.strokeStyle = 'yellow';
+    // context.strokeRect(10,10,100,100);
+
+    // context.clearRect(50,50, 10,10);
+
+    //三角形
+    // context.fillStyle = 'blue';
+    // context.beginPath();      //绘制路径
+    // context.moveTo(240, 240); //把画笔移动到这里
+    // context.lineTo(300, 240); //x轴300像素位置，y轴240像素位置
+    // context.lineTo(240, 300); //x轴240像素位置，y轴300像素位置
+    // context.fill();
+
+
+    //圆弧
+    function drawCircle(x,y,radius){
+        context.beginPath();
+        context.arc(x,y,radius,0,Math.PI*2); //x轴，y轴，半径，起始角度，圆周率
+        context.fill();
+        // context.stroke(); //不填充仅描边儿
+    }
+
+    //画线
+    function drawLine(x1, y1, x2, y2){
+        context.beginPath();
+        context.moveTo(x1,y1);
+        context.lineTo(x2,y2);
+        context.lineWidth = 1;
+        context.stroke();
+        context.closePath();
+    }
+
+
+
+
+    /**   **/
+    function autoSetCanvas(canvas){
+        setCanvasSize();
+
+        window.onresize = function(){
+            setCanvasSize();
+        }
+
+        function setCanvasSize(){
+            //获取用户页面的宽高(IE不支持)
+            var width = document.documentElement.clientWidth;
+            var height = document.documentElement.clientHeight;
+
+            canvas.width = width;
+            canvas.height = height;
+
+        }
+    }
+
+    /*** 监听鼠标事件 **/
+    function listenToMouse(canvas){
+        var useing = false; //标记绘画模式
+        var lastPoint = {"x": undefined, "y": undefined}
+
+        canvas.onmousedown = function(e){
+            var x = e.clientX;
+            var y = e.clientY;
+            lastPoint = {"x": x, "y": y};
+
+            useing = true;
+
+            if(earserEnabled){
+                context.clearRect(x-5,y-5,10,10)
+            }else{
+            }
+
+            // drawCircle(x,y,1);
+        }
+
+        canvas.onmousemove = function(e){
+            var x = e.clientX;
+            var y = e.clientY;
+
+            if(!useing){ return }
+
+            if(earserEnabled){
+                context.clearRect(x-5,y-5,10,10)
+            }else{
+                var newPoint = {"x": x , "y": y}
+                drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
+                lastPoint = newPoint;
+            }
+        }
+
+        canvas.onmouseup = function(e){
+            useing = false;
+        }
+
+        var earserEnabled = false;
+        eraser.onclick = function(){
+            earserEnabled = true;
+            actions.className = "actions x";
+        }
+
+        brush.onclick = function(){
+            earserEnabled = false;
+            actions.className = "actions";
+        }
+    }
+
+
+</script>

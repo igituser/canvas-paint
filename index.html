@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin:0;
+        }
+
+        #canvas {
+            width:300px;
+            height:300px;
+            border:1px solid #333;
+            position:relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas"></div>
+</body>
+</html>
+
+<script>
+    var canvas = document.getElementById('canvas');
+
+    var painting = false;
+
+    canvas.onmousedown = function(e){
+        painting = true;
+
+        var brush = document.createElement('div');
+        brush.className = "brush";
+        var x = e.clientX;
+        var y = e.clientY;
+
+        brush.style = "width:6px; height:6px; background-color:black; border-radius:3px; " + 
+        "position:absolute;" + "left: " + (x-3) + "px;" + "top: " + (y-3) + "px;";
+        
+        canvas.appendChild(brush);
+
+    }
+
+
+    canvas.onmousemove = function(e){
+        if(painting){
+            var brush = document.createElement('div');
+            brush.className = "brush";
+            var x = e.clientX;
+            var y = e.clientY;
+    
+            brush.style = "width:6px; height:6px; background-color:black; border-radius:3px; " + 
+            "position:absolute;" + "left: " + (x-3) + "px;" + "top: " + (y-3) + "px;";
+            
+            canvas.appendChild(brush);
+        }
+    }
+
+    canvas.onmouseup = function(e){
+        painting = false;
+    }
+
+</script>
